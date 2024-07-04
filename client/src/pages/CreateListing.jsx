@@ -32,6 +32,7 @@ export default function CreateListing() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   console.log(formData);
+
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
@@ -41,6 +42,7 @@ export default function CreateListing() {
       for (let i = 0; i < files.length; i++) {
         promises.push(storeImage(files[i]));
       }
+
       Promise.all(promises)
         .then((urls) => {
           setFormData({
@@ -153,6 +155,7 @@ export default function CreateListing() {
       setLoading(false);
     }
   };
+
   return (
     <main className='p-3 max-w-4xl mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
@@ -339,10 +342,7 @@ export default function CreateListing() {
           </p>
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
-              <div
-                key={url}
-                className='flex justify-between p-3 border items-center'
-              >
+              <div key={url} className='flex justify-between p-3 border items-center' >
                 <img
                   src={url}
                   alt='listing image'

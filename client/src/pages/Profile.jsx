@@ -18,6 +18,7 @@ import {
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -43,9 +44,9 @@ export default function Profile() {
   }, [file]);
 
   const handleFileUpload = (file) => {
-    const storage = getStorage(app);
+    const storage = getStorage(app);  //firebase storage
     const fileName = new Date().getTime() + file.name;
-    const storageRef = ref(storage, fileName);
+    const storageRef = ref(storage, fileName);  //path on the storage (here directly on root)
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
@@ -60,7 +61,7 @@ export default function Profile() {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, avatar: downloadURL })
+          setFormData({ ...formData, avatar: downloadURL })   //form data img
         );
       }
     );
@@ -75,7 +76,7 @@ export default function Profile() {
     try {
       dispatch(updateUserStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -165,7 +166,7 @@ export default function Profile() {
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
-          onChange={(e) => setFile(e.target.files[0])}
+          onChange={(e) => setFile(e.target.files[0])}  //if user selects > 1 file...it uploads only 1
           type='file'
           ref={fileRef}
           hidden

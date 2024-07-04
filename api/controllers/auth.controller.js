@@ -30,16 +30,15 @@ export const signin = async (req, res, next) => {
     if (!validPassword) return next(errorHandler(401, 'Wrong credentials!'));
 
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h', // optional: specify token expiration time
+      expiresIn: '1h', // optional
     });
 
     const { password: pass, ...rest } = validUser._doc;
 
-    res
-      .cookie('access_token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // cookie is only sent over HTTPS in production
-        sameSite: 'strict', // helps prevent CSRF attacks
+    res.cookie('access_token', token, {
+        httpOnly: true,   //third party can't access cookie
+        // secure: process.env.NODE_ENV === 'production', // cookie is only sent over HTTPS in production
+        // sameSite: 'strict', // helps prevent CSRF attacks
       })
       .status(200)
       .json(rest);
