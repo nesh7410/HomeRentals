@@ -29,13 +29,7 @@ export default function Search() {
     const orderFromUrl = urlParams.get('order');
 
     if (
-      searchTermFromUrl ||
-      typeFromUrl ||
-      parkingFromUrl ||
-      furnishedFromUrl ||
-      offerFromUrl ||
-      sortFromUrl ||
-      orderFromUrl
+      searchTermFromUrl || typeFromUrl || parkingFromUrl || furnishedFromUrl || offerFromUrl || sortFromUrl || orderFromUrl
     ) {
       setSidebardata({
         searchTerm: searchTermFromUrl || '',
@@ -87,7 +81,7 @@ export default function Search() {
       setSidebardata({
         ...sidebardata,
         [e.target.id]:
-          e.target.checked || e.target.checked === 'true' ? true : false,
+          (e.target.checked || e.target.checked === 'true') ? true : false,
       });
     }
 
@@ -127,6 +121,7 @@ export default function Search() {
     }
     setListings([...listings, ...data]);
   };
+  
   return (
     <div className='flex flex-col md:flex-row'>
       <div className='p-7  border-b-2 md:border-r-2 md:min-h-screen'>
