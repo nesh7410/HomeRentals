@@ -1,5 +1,5 @@
 add spinner in signin/singup button
 
-
+google maps integration
 
 redux -> signin, profile

@@ -15,3 +15,24 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+// // Import the functions you need from the SDKs you need
+// import { initializeApp } from "firebase/app";
+// import { getAnalytics } from "firebase/analytics";
+// // TODO: Add SDKs for Firebase products that you want to use
+// // https://firebase.google.com/docs/web/setup#available-libraries
+
+// // Your web app's Firebase configuration
+// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// const firebaseConfig = {
+//   apiKey: "AIzaSyCDrfS1_Ma33lu8vO4yYQNVIoK5NBhnFKM",
+//   authDomain: "homerentals-dfbe0.firebaseapp.com",
+//   projectId: "homerentals-dfbe0",
+//   storageBucket: "homerentals-dfbe0.firebasestorage.app",
+//   messagingSenderId: "911933362449",
+//   appId: "1:911933362449:web:6cca059231a3b03ea97cb0",
+//   measurementId: "G-MZNWY95QYN"
+// };
+
+// // Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
