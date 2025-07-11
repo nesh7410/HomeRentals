@@ -6,6 +6,7 @@ export const createListing = async (req, res, next) => {
     const listing = await Listing.create(req.body);
     return res.status(201).json(listing);
   } catch (error) {
+    console.error('Error creating listing:', error);
     next(error);
   }
 };
@@ -112,6 +113,7 @@ export const getListings = async (req, res, next) => {
 
     return res.status(200).json(listings);
   } catch (error) {
+    // console.log("listings not found");
     next(error);
   }
 };
