@@ -1,13 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../firebase';
-import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
@@ -31,12 +24,6 @@ export default function Profile() {
   const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
-  // firebase storage
-  // allow read;
-  // allow write: if
-  // request.resource.size < 2 * 1024 * 1024 &&
-  // request.resource.contentType.matches('image/.*')
-
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -44,28 +31,36 @@ export default function Profile() {
   }, [file]);
 
   const handleFileUpload = (file) => {
-    const storage = getStorage(app);  //firebase storage
-    const fileName = new Date().getTime() + file.name;
-    const storageRef = ref(storage, fileName);  //path on the storage (here directly on root)
-    const uploadTask = uploadBytesResumable(storageRef, file);
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'HomeRentals'); // Cloudinary unsigned preset
+  formData.append('cloud_name', 'dhzbxdknl');       // Your Cloudinary cloud name
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePerc(Math.round(progress));
-      },
-      (error) => {
-        setFileUploadError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, avatar: downloadURL })   //form data img
-        );
-      }
-    );
+  const xhr = new XMLHttpRequest();
+
+  xhr.open('POST', 'https://api.cloudinary.com/v1_1/dhzbxdknl/image/upload');
+
+  xhr.upload.addEventListener('progress', (event) => {
+    if (event.lengthComputable) {
+      const progress = (event.loaded / event.total) * 100;
+      setFilePerc(Math.round(progress));
+    }
+  });
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      setFormData((prev) => ({ ...prev, avatar: response.secure_url }));
+    } else {
+      setFileUploadError(true);
+    }
   };
+
+  xhr.onerror = () => setFileUploadError(true);
+
+  xhr.send(formData);
+};
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });

@@ -1,11 +1,4 @@
 import { useState } from 'react';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,29 +56,43 @@ export default function CreateListing() {
   };
 
   const storeImage = async (file) => {
-    return new Promise((resolve, reject) => {
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-        },
-        (error) => {
-          reject(error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
+  return new Promise(async (resolve, reject) => {
+    try {
+      // console.log('Uploading image:', file.name);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'HomeRentals');
+      formData.append('cloud_name', 'dhzbxdknl');
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.open('POST', 'https://api.cloudinary.com/v1_1/dhzbxdknl/image/upload');
+
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          // console.log(`Upload is ${progress.toFixed(2)}% done`);
         }
-      );
-    });
-  };
+      });
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          // console.log('Image uploaded successfully:', response.secure_url);
+          resolve(response.secure_url);
+        } else {
+          reject(new Error('Upload failed'));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Upload error'));
+      xhr.send(formData);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 
   const handleRemoveImage = (index) => {
     setFormData({
@@ -147,10 +154,12 @@ export default function CreateListing() {
       const data = await res.json();
       setLoading(false);
       if (data.success === false) {
+        // console.error('Error creating listing:', error);
         setError(data.message);
       }
       navigate(`/listing/${data._id}`);
     } catch (error) {
+      // console.error('Error creating listing:', error);
       setError(error.message);
       setLoading(false);
     }
