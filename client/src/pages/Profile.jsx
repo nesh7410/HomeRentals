@@ -31,36 +31,35 @@ export default function Profile() {
   }, [file]);
 
   const handleFileUpload = (file) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', 'HomeRentals'); // Cloudinary unsigned preset
-  formData.append('cloud_name', 'dhzbxdknl');       // Your Cloudinary cloud name
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
 
-  const xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
 
-  xhr.open('POST', 'https://api.cloudinary.com/v1_1/dhzbxdknl/image/upload');
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`);
 
-  xhr.upload.addEventListener('progress', (event) => {
-    if (event.lengthComputable) {
-      const progress = (event.loaded / event.total) * 100;
-      setFilePerc(Math.round(progress));
-    }
-  });
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable) {
+        const progress = (event.loaded / event.total) * 100;
+        setFilePerc(Math.round(progress));
+      }
+    });
 
-  xhr.onload = () => {
-    if (xhr.status === 200) {
-      const response = JSON.parse(xhr.responseText);
-      setFormData((prev) => ({ ...prev, avatar: response.secure_url }));
-    } else {
-      setFileUploadError(true);
-    }
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        setFormData((prev) => ({ ...prev, avatar: response.secure_url }));
+      } else {
+        setFileUploadError(true);
+      }
+    };
+
+    xhr.onerror = () => setFileUploadError(true);
+
+    xhr.send(formData);
   };
-
-  xhr.onerror = () => setFileUploadError(true);
-
-  xhr.send(formData);
-};
-
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -156,6 +155,7 @@ export default function Profile() {
       console.log(error.message);
     }
   };
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
