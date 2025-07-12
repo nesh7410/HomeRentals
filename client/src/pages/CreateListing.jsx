@@ -61,12 +61,12 @@ export default function CreateListing() {
       // console.log('Uploading image:', file.name);
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', 'HomeRentals');
-      formData.append('cloud_name', 'dhzbxdknl');
+      formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+      formData.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
 
       const xhr = new XMLHttpRequest();
 
-      xhr.open('POST', 'https://api.cloudinary.com/v1_1/dhzbxdknl/image/upload');
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`);
 
       xhr.upload.addEventListener('progress', (event) => {
         if (event.lengthComputable) {
