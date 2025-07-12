@@ -66,7 +66,7 @@ export const getListing = async (req, res, next) => {
 export const getListings = async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 9;
-    console.log("Listings found:", listings);
+    // console.log("Listings found:", listings);
     const startIndex = parseInt(req.query.startIndex) || 0;
 
     let offer = req.query.offer;
@@ -110,10 +110,11 @@ export const getListings = async (req, res, next) => {
       .sort({ [sort]: order })
       .limit(limit)
       .skip(startIndex);
-
+    // console.log({listings});
+    
     return res.status(200).json(listings);
   } catch (error) {
-    // console.log("listings not found");
+    console.log("listings not found", error);
     next(error);
   }
 };
